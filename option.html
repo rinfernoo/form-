@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signed Documents Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            background-color: #f4f7f9;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .dashboard {
+            width: 100%;
+            max-width: 1000px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        th,
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        
+        .status.completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .action-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .action-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            table,
+            thead,
+            tbody,
+            th,
+            td,
+            tr {
+                display: block;
+            }
+            thead {
+                display: none;
+            }
+            tr {
+                margin-bottom: 15px;
+                background: #f9f9f9;
+                border-radius: 5px;
+                padding: 10px;
+            }
+            td {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 10px;
+                border: none;
+                border-bottom: 1px solid #eee;
+            }
+            td:last-child {
+                border-bottom: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard">
+        <h2>Past Signed Documents</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Document Name</th>
+                    <th>Date Signed</th>
+                    <th>Signers</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="document-table-body">
+                <!-- Rows will be inserted by JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Example document data (you would normally fetch this from a database)
+        const signedDocuments = [{
+            name: "NDA_Acme_Corp.pdf",
+            date: "2025-10-15",
+            signers: 2,
+            status: "completed",
+            link: "#"
+        }, {
+            name: "Contract_Jane_Doe.pdf",
+            date: "2025-10-12",
+            signers: 3,
+            status: "completed",
+            link: "#"
+        }, {
+            name: "Partnership_Agreement.pdf",
+            date: "2025-10-10",
+            signers: 2,
+            status: "pending",
+            link: "#"
+        }];
+
+        const tableBody = document.getElementById("document-table-body");
+
+        signedDocuments.forEach(doc => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+        <td>${doc.name}</td>
+        <td>${doc.date}</td>
+        <td>${doc.signers}</td>
+        <td><span class="status ${doc.status}">${doc.status.charAt(0).toUpperCase() + doc.status.slice(1)}</span></td>
+        <td><a class="action-link" href="${doc.link}">View</a></td>
+      `;
+            tableBody.appendChild(row);
+        });
+    </script>
+
+</body>
+
+</html>

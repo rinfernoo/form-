@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document Signature Upload</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background: #f4f7f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: #fff;
+            padding: 30px;
+            margin: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        
+        .section {
+            margin-top: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        input[type="file"],
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        .signature-methods {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .signature-methods button {
+            flex: 1;
+            margin: 0 5px;
+            padding: 10px;
+            border: none;
+            background: #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .signature-methods button.active {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        #draw-signature canvas {
+            border: 1px solid #ccc;
+            width: 100%;
+            height: 200px;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        
+        #type-signature-preview {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 32px;
+            color: #333;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px dashed #ccc;
+            border-radius: 5px;
+            min-height: 50px;
+        }
+        
+        button[type="submit"] {
+            margin-top: 20px;
+            padding: 12px;
+            width: 100%;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button[type="submit"]:hover {
+            background-color: #218838;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        #upload-signature-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+        }
+        
+        .clear-btn {
+            margin-top: 10px;
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .clear-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Upload Document to be Signed</h2>
+
+        <form id="signature-form">
+            <!-- Upload Document -->
+            <div class="section">
+                <label for="document-upload">Choose Document</label>
+                <input type="file" id="document-upload" name="document" accept=".pdf,.doc,.docx" required />
+            </div>
+
+            <!-- Signature Method Selector -->
+            <div class="section">
+                <label>Select Signature Method</label>
+                <div class="signature-methods">
+                    <button type="button" class="method-btn active" data-method="draw">Draw</button>
+                    <button type="button" class="method-btn" data-method="type">Type</button>
+                    <button type="button" class="method-btn" data-method="upload">Upload</button>
+                </div>
+            </div>
+
+            <!-- Draw Signature -->
+            <div class="section" id="draw-signature">
+                <label>Draw Signature</label>
+                <canvas id="signature-canvas"></canvas>
+                <button type="button" class="clear-btn" onclick="clearCanvas()">Clear</button>
+            </div>
+
+            <!-- Type-to-sign -->
+            <div class="section hidden" id="type-signature">
+                <label>Type Your Name</label>
+                <input type="text" id="typed-name" placeholder="e.g. John Doe" />
+                <div id="type-signature-preview"></div>
+            </div>
+
+            <!-- Upload Signature -->
+            <div class="section hidden" id="upload-signature">
+                <label>Upload Signature Image</label>
+                <input type="file" id="signature-upload" accept="image/*" />
+                <div id="upload-signature-preview"></div>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit">Submit for Signature </button>
+        </form>
+    </div>
+
+    <script>
+        // Signature method toggle
+        const methodButtons = document.querySelectorAll('.method-btn');
+        const sections = {
+            draw: document.getElementById('draw-signature'),
+            type: document.getElementById('type-signature'),
+            upload: document.getElementById('upload-signature')
+        };
+
+        methodButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                methodButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const method = btn.getAttribute('data-method');
+                for (let key in sections) {
+                    sections[key].classList.add('hidden');
+                }
+                sections[method].classList.remove('hidden');
+            });
+        });
+
+        // Type to sign preview
+        document.getElementById('typed-name').addEventListener('input', function() {
+            document.getElementById('type-signature-preview').textContent = this.value;
+        });
+
+        // Upload signature image preview
+        document.getElementById('signature-upload').addEventListener('change', function() {
+            const preview = document.getElementById('upload-signature-preview');
+            preview.innerHTML = '';
+            if (this.files && this.files[0]) {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(this.files[0]);
+                preview.appendChild(img);
+            }
+        });
+
+        // Canvas drawing
+        const canvas = document.getElementById('signature-canvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        canvas.addEventListener('mousedown', e => {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener('mousemove', e => {
+            if (drawing) {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            drawing = false;
+        });
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Form submission (demo only)
+        document.getElementById('signature-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Form submitted (demo)');
+            // Here you would handle uploading the data to a server
+        });
+    </script>
+</body>
+
+</html>

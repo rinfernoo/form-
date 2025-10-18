@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login & Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        .dashboard {
+            display: none;
+            width: 100%;
+            max-width: 1000px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th,
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f1f1f1;
+        }
+        
+        .logout-btn {
+            float: right;
+            background-color: #dc3545;
+            margin-top: -50px;
+        }
+        
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        
+        .completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .action-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .action-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- LOGIN FORM -->
+    <div class="container" id="login-container">
+        <h2>Login to Sign Portal</h2>
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="user@example.com" required />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" required />
+
+        <button onclick="login()">Login</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard" id="dashboard">
+        <h2>Your Signed Documents</h2>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Document</th>
+                    <th>Date</th>
+                    <th>Signers</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="doc-table">
+                <!-- JS Populates rows -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const documents = [{
+            name: "Agreement_Client_A.pdf",
+            date: "2025-10-15",
+            signers: 2,
+            status: "completed",
+            link: "#"
+        }, {
+            name: "NDA_TechStartup.pdf",
+            date: "2025-10-13",
+            signers: 3,
+            status: "completed",
+            link: "#"
+        }, {
+            name: "Contract_Freelancer.pdf",
+            date: "2025-10-11",
+            signers: 2,
+            status: "pending",
+            link: "#"
+        }];
+
+        function login() {
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            // Simple mock validation (replace with real auth)
+            if (email === "" || password === "") {
+                alert("Please enter both email and password.");
+                return;
+            }
+
+            // Hide login, show dashboard
+            document.getElementById("login-container").style.display = "none";
+            document.getElementById("dashboard").style.display = "block";
+
+            populateTable();
+        }
+
+        function logout() {
+            document.getElementById("login-container").style.display = "block";
+            document.getElementById("dashboard").style.display = "none";
+
+            // Clear fields
+            document.getElementById("email").value = "";
+            document.getElementById("password").value = "";
+        }
+
+        function populateTable() {
+            const tbody = document.getElementById("doc-table");
+            tbody.innerHTML = "";
+
+            documents.forEach(doc => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+          <td>${doc.name}</td>
+          <td>${doc.date}</td>
+          <td>${doc.signers}</td>
+          <td><span class="status ${doc.status}">${doc.status.charAt(0).toUpperCase() + doc.status.slice(1)}</span></td>
+          <td><a href="${doc.link}" class="action-link">View</a></td>
+        `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+
+</html>

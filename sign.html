@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Signed Document</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f4f7f9;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .success {
+            color: green;
+        }
+        
+        .failure {
+            color: red;
+        }
+        
+        .signer-status {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #eef;
+            border-radius: 5px;
+        }
+        
+        .signer-status span {
+            font-weight: bold;
+        }
+        
+        .signed {
+            color: green;
+        }
+        
+        .unsigned {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Verify Signed Document</h2>
+
+        <label for="signed-document">Upload Signed Document</label>
+        <input type="file" id="signed-document" accept=".pdf" />
+
+        <button onclick="verifySignatures()">Verify Signatures</button>
+
+        <div class="result" id="verification-result" style="display:none;">
+            <div id="status-message"></div>
+            <div class="signer-status" id="signer-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // Dummy signer list for simulation
+        const expectedSigners = [{
+                name: "Alice Johnson",
+                email: "alice@example.com",
+                signed: true
+            }, {
+                name: "Bob Smith",
+                email: "bob@example.com",
+                signed: true
+            }, {
+                name: "Charlie Lee",
+                email: "charlie@example.com",
+                signed: false
+            } // Simulate missing signer
+        ];
+
+        function verifySignatures() {
+            const fileInput = document.getElementById("signed-document");
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please upload a signed document.");
+                return;
+            }
+
+            // Simulated verification logic
+            const resultBox = document.getElementById("verification-result");
+            const statusMessage = document.getElementById("status-message");
+            const signerList = document.getElementById("signer-list");
+
+            resultBox.style.display = "block";
+
+            const allSigned = expectedSigners.every(signer => signer.signed);
+
+            if (allSigned) {
+                statusMessage.innerHTML = "<p class='success'>✅ Document is correctly signed by all parties.</p>";
+            } else {
+                statusMessage.innerHTML = "<p class='failure'>❌ Missing one or more signatures.</p>";
+            }
+
+            // Render signer status
+            signerList.innerHTML = "";
+            expectedSigners.forEach(signer => {
+                const statusClass = signer.signed ? 'signed' : 'unsigned';
+                const statusText = signer.signed ? 'Signed' : 'Missing';
+                signerList.innerHTML += `
+          <p><span>${signer.name} (${signer.email})</span>: <span class="${statusClass}">${statusText}</span></p>
+        `;
+            });
+        }
+    </script>
+</body>
+
+</html>

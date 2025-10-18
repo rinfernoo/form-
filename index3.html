@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multi-Signer Document Upload</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f4f7f9;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px;
+            margin: 0;
+        }
+        
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        
+        .section {
+            margin-top: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        .signer-list {
+            margin-top: 10px;
+            padding-left: 0;
+            list-style: none;
+        }
+        
+        .signer-list li {
+            background: #f1f1f1;
+            padding: 10px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .signer-list button {
+            background: #dc3545;
+            border: none;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .add-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .add-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        button[type="submit"] {
+            background-color: #28a745;
+            border: none;
+            color: white;
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button[type="submit"]:hover {
+            background-color: #218838;
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .flex-row>div {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Multi-Signer Document Flow</h2>
+
+        <form id="multi-signer-form">
+            <!-- Document Upload -->
+            <div class="section">
+                <label for="document">Upload Document</label>
+                <input type="file" id="document" name="document" accept=".pdf,.doc,.docx" required />
+            </div>
+
+            <!-- Primary Signer Info -->
+            <div class="section">
+                <label>Primary Signer</label>
+                <input type="text" name="primary_name" placeholder="Full Name" required />
+                <input type="email" name="primary_email" placeholder="Email Address" required />
+            </div>
+
+            <!-- Additional Signers -->
+            <div class="section">
+                <label>Invite Additional Signers</label>
+                <div class="flex-row">
+                    <div>
+                        <input type="text" id="signer-name" placeholder="Full Name" />
+                    </div>
+                    <div>
+                        <input type="email" id="signer-email" placeholder="Email Address" />
+                    </div>
+                </div>
+                <button type="button" class="add-btn" onclick="addSigner()">Add Signer</button>
+
+                <ul class="signer-list" id="signer-list"></ul>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit">Send Document for Signing</button>
+        </form>
+    </div>
+
+    <script>
+        const signers = [];
+        const signerList = document.getElementById('signer-list');
+
+        function addSigner() {
+            const name = document.getElementById('signer-name').value.trim();
+            const email = document.getElementById('signer-email').value.trim();
+
+            if (name && email) {
+                signers.push({
+                    name,
+                    email
+                });
+                updateSignerList();
+                document.getElementById('signer-name').value = '';
+                document.getElementById('signer-email').value = '';
+            } else {
+                alert('Please enter both name and email.');
+            }
+        }
+
+        function removeSigner(index) {
+            signers.splice(index, 1);
+            updateSignerList();
+        }
+
+        function updateSignerList() {
+            signerList.innerHTML = '';
+            signers.forEach((signer, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+          ${signer.name} &lt;${signer.email}&gt;
+          <button onclick="removeSigner(${index})">Remove</button>
+        `;
+                signerList.appendChild(li);
+            });
+        }
+
+        // Handle form submission
+        document.getElementById('multi-signer-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const primaryName = this.primary_name.value.trim();
+            const primaryEmail = this.primary_email.value.trim();
+
+            if (!primaryName || !primaryEmail || signers.length === 0) {
+                alert('Please complete all fields and add at least one additional signer.');
+                return;
+            }
+
+            const documentFile = this.document.files[0];
+            const formData = new FormData();
+            formData.append('document', documentFile);
+            formData.append('primary_name', primaryName);
+            formData.append('primary_email', primaryEmail);
+            formData.append('additional_signers', JSON.stringify(signers));
+
+            // For demonstration purposes
+            alert('Document prepared for multiple signers (submission not implemented).');
+            // In a real scenario, you would send formData to your server via fetch/AJAX.
+        });
+    </script>
+</body>
+
+</html>

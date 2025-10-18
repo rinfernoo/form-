@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Document for Signature</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f4f7f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .upload-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .upload-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .file-input {
+            margin-bottom: 20px;
+        }
+        
+        .file-input input[type="file"] {
+            display: none;
+        }
+        
+        .custom-file-label {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .custom-file-label:hover {
+            background-color: #0056b3;
+        }
+        
+        .file-name {
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        button {
+            background-color: #28a745;
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="upload-container">
+        <h2>Upload Document to be Signed</h2>
+        <form>
+            <div class="file-input">
+                <label for="file-upload" class="custom-file-label">Choose File</label>
+                <input type="file" id="file-upload" name="document" accept=".pdf,.doc,.docx" />
+                <div class="file-name" id="file-name">No file chosen</div>
+            </div>
+            <button type="submit">Submit for Signature</button>
+        </form>
+    </div>
+
+    <script>
+        const fileUpload = document.getElementById('file-upload');
+        const fileName = document.getElementById('file-name');
+
+        fileUpload.addEventListener('change', function() {
+            if (fileUpload.files.length > 0) {
+                fileName.textContent = fileUpload.files[0].name;
+            } else {
+                fileName.textContent = 'No file chosen';
+            }
+        });
+    </script>
+
+
+</body>
+
+</html>
